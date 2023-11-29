@@ -1,55 +1,49 @@
-class MobileOperator:
-    def __init__(self, name, cost_per_minute, coverage_area):
+import random
+
+class Human:
+    def __init__(self, name, age, shooting_experience):
         self.name = name
-        self.cost_per_minute = cost_per_minute
-        self.coverage_area = coverage_area
+        self.age = age
+        self.shooting_experience = shooting_experience
 
-    def quality(self):
-        return 100 * self.coverage_area / self.cost_per_minute
+    def shoot(self):
+        return False
 
-    def object_info(self):
-        return f"Название оператора: {self.name}\nСтоимость 1 минуты разговора: {self.cost_per_minute}\nПлощадь покрытия: {self.coverage_area}\n"
+class Novice(Human):
+    def shoot(self):
+        probability = 0.01 * self.shooting_experience
+        return random.random() < probability
 
-class SubMobileOperator(MobileOperator):
-    def __init__(self, name, cost_per_minute, coverage_area, P):
-        super().__init__(name, cost_per_minute, coverage_area)
-        self.P = P
+class Experienced(Human):
+    def shoot(self):
+        probability = 0.05 * self.shooting_experience
+        return random.random() < probability
 
-    def quality(self):
-        Q = super().quality()
-        if self.P:
-            return 0.7 * Q
-        else:
-            return 1.5 * Q
+class Veteran(Human):
+    def shoot(self):
+        probability = 0.9 - 0.01 * self.age
+        return random.random() < probability
 
-    def object_info(self):
-        return f"{super().object_info()}Дополнительная плата за соединение: {self.P}\n"
+# массив из 7 человек
+people = [
+    Novice("Новичок Иван", 25, 3),
+    Novice("Новичок Ильюша", 25, 3),
+    Experienced("Опытный Дядя", 30, 7),
+    Veteran("Ветеран Игорь", 40, 15),
+    Experienced("Опытный Гюнтер", 35, 5),
+    Novice("Новичок Гоша", 20, 2),
+    Human("Просто человек Маша", 22, 1)  #без опыта стрельбы
+]
 
-# Создание объектов класса MobileOperator и SubMobileOperator с вводом данных
-def create_mobile_operator():
-    name = input("Введите название оператора: ")
-    cost_per_minute = float(input("Введите стоимость 1 минуты разговора: "))
-    coverage_area = float(input("Введите площадь покрытия: "))
-    return MobileOperator(name, cost_per_minute, coverage_area)
+# стрельба
+shot_fired = False
+for person in people:
+    result = person.shoot()
+    print(f"{person.name} ({type(person).__name__}): {'Попал' if result else 'Промах'}")
+    if result:
+        shot_fired = True
+        break
 
-def create_sub_mobile_operator():
-    name = input("Введите название оператора: ")
-    cost_per_minute = float(input("Введите стоимость 1 минуты разговора: "))
-    coverage_area = float(input("Введите площадь покрытия: "))
-    P = bool(input("Наличие платы за соединение (True/False): "))
-    return SubMobileOperator(name, cost_per_minute, coverage_area, P)
+if not shot_fired:
+    print("Никто не попал")
 
-# Вывод информации о объектах
-def print_operator_info(operator):
-    print(operator.object_info())
-
-# Создание объектов и вывод информации
-operator1 = create_mobile_operator()
-print_operator_info(operator1)
-
-operator2 = create_sub_mobile_operator()
-print_operator_info(operator2)
-
-# Вывод качества объектов
-print(f"Качество оператора 1-го уровня: {operator1.quality()}")
-print(f"Качество оператора 2-го уровня: {operator2.quality()}")
